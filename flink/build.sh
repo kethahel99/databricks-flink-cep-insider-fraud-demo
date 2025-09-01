@@ -1,0 +1,1 @@
+ cd flink && mvn -q -DskipTests package && cd -

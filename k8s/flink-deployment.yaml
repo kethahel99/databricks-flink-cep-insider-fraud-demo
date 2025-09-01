@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata: { name: flink }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flink-env
+  namespace: flink
+data:
+  MODE: "fraud"
+  GROUP_ID: "flink-consumer"
+  TOPIC_FRAUD: "auth_txn"
+  TOPIC_INSIDER: "insider_events"
+  TOPIC_ALERTS: "alerts"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eh-secret
+  namespace: flink
+type: Opaque
+stringData:
+  EH_LISTEN: "<paste .out.env EH_LISTEN content (string) here>"
+  EH_BROKER: "<paste .out.env EH_BROKER here>"
+---
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: fraud-insider-app
+  namespace: flink
+spec:
+  image: "<ACR_LOGIN_SERVER>/fraud-insider-flink:1.0.0"
+  flinkVersion: v1_17
+  serviceAccount: default
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "2"
+    execution.checkpointing.interval: "5000"
+  job:
+    jarURI: local:///opt/flink/usrlib/fraud-insider-flink-1.0.0.jar
+    entryClass: "com.acme.fraudinsider.StreamingJob"
+    parallelism: 2
+    upgradeMode: last-state
+    state: running
+  podTemplate:
+    spec:
+      containers:
+        - name: flink-main-container
+          env:
+            - name: MODE
+              valueFrom: { configMapKeyRef: { name: flink-env, key: MODE } }
+            - name: GROUP_ID
+              valueFrom: { configMapKeyRef: { name: flink-env, key: GROUP_ID } }
+            - name: TOPIC_FRAUD
+              valueFrom: { configMapKeyRef: { name: flink-env, key: TOPIC_FRAUD } }
+            - name: TOPIC_INSIDER
+              valueFrom: { configMapKeyRef: { name: flink-env, key: TOPIC_INSIDER } }
+            - name: TOPIC_ALERTS
+              valueFrom: { configMapKeyRef: { name: flink-env, key: TOPIC_ALERTS } }
+            - name: EH_LISTEN
+              valueFrom: { secretKeyRef: { name: eh-secret, key: EH_LISTEN } }
+            - name: EH_BROKER
+              valueFrom: { secretKeyRef: { name: eh-secret, key: EH_BROKER } }
