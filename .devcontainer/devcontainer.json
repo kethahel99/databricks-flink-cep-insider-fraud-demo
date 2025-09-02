@@ -40,6 +40,10 @@
 		"ghcr.io/wxw-matt/devcontainer-features/command_runner:0": {},
 		"ghcr.io/azure/azure-dev/azd:0": {
 			"version": "stable"
+		},
+		"ghcr.io/devcontainers/features/powershell": {
+			"installPowerShell": "true",
+			"version": "latest"
 		}
 	}
 
