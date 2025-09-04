@@ -2,6 +2,5 @@ flink/target
 flink/.idea
 flink/target/classes
 flink/target/classes/*
-producers/__pycache__
 out.env
 .vscode
