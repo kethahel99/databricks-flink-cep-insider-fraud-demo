@@ -37,37 +37,6 @@ $ErrorActionPreference = "Stop"
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Root = Split-Path -Parent $Here
 
-# Load env - First check environment variables, then fall back to .env file
-$EnvFile = Join-Path $Root ".env"
-$envLoaded = $false
-
-# Function to load from .env file
-function Load-FromEnvFile {
-    param([string]$filePath)
-
-    if (Test-Path $filePath) {
-        Get-Content $filePath | ForEach-Object {
-            if ($_ -match '^([^=]+)=(.*)$') {
-                $key = $matches[1].Trim()
-                $value = $matches[2].Trim()
-
-                # Remove surrounding quotes if present
-                if ($value.StartsWith('"') -and $value.EndsWith('"')) {
-                    $value = $value.Substring(1, $value.Length - 2)
-                } elseif ($value.StartsWith("'") -and $value.EndsWith("'")) {
-                    $value = $value.Substring(1, $value.Length - 2)
-                }
-
-                # Set as script variable if not already set from environment
-                if (-not (Get-Variable -Name $key -Scope Script -ErrorAction SilentlyContinue)) {
-                    Set-Variable -Name $key -Value $value -Scope Script
-                }
-            }
-        }
-        return $true
-    }
-    return $false
-}
 
 # Try to load from environment variables first
 Write-Host "Checking for environment variables..."
@@ -127,10 +96,11 @@ foreach ($var in $additionalVars) {
     $varName = $var.Name
     $envVarName = $varName
     $scriptVarName = $varName.Replace('_', '')
+    $checkValue = [System.Environment]::GetEnvironmentVariable($envVarName)
 
     # Check environment variable
-    if ($env[$envVarName]) {
-        $value = $env[$envVarName]
+    if ($checkValue) {
+        $value = [System.Environment]::GetEnvironmentVariable($envVarName)
         Write-Host "  Using $varName from environment: $value"
     }
     # Check script variable
@@ -155,12 +125,6 @@ foreach ($var in $additionalVars) {
     }
 }
 
-# Load from .env file as fallback
-if (Load-FromEnvFile $EnvFile) {
-    Write-Host "Loaded additional variables from .env file"
-} else {
-    Write-Host "No .env file found, using defaults and provided values"
-}
 
 # Check required variables
 if (-not $SubscriptionId -or -not $ResourceGroup -or -not $Location -or -not $Prefix) {
@@ -178,6 +142,10 @@ az account set -s $SubscriptionId
 # Create resource group
 az group create -n $ResourceGroup -l $Location | Out-Null
 
+# Create managed resource group for Databricks workspace
+$ManagedRgName = $ResourceGroup+"-databricks"
+az group create -n $ManagedRgName -l $Location | Out-Null
+
 Write-Host "Deploying infra (AKS, ACR, ADLS, Event Hubs, Databricks)…"
 
 # Deploy Bicep template
@@ -193,7 +161,7 @@ az deployment group create `
   -o json > $OutFile
 
 # Parse JSON output
-$DeploymentOutput = Get-Content $OutFile | ConvertFrom-Json
+ $DeploymentOutput = Get-Content $OutFile | ConvertFrom-Json
 $Outputs = $DeploymentOutput.properties.outputs
 
 $AKS_NAME = $Outputs.aksNameOut.value
@@ -231,6 +199,17 @@ Write-Host "Getting AKS credentials…"
 az aks get-credentials -g $ResourceGroup -n $AKS_NAME --overwrite-existing
 
 # Flink Operator (Helm)
+# install cert-manager first if not already installed
+if (-not (helm list -n cert-manager | Select-String 'cert-manager')) {
+    Write-Host "Installing cert-manager (if not already installed)…"
+    helm repo add jetstack https://charts.jetstack.io | Out-Null
+    helm repo update | Out-Null
+    helm install cert-manager jetstack/cert-manager `
+      --namespace cert-manager --create-namespace `
+      --version v1.12.0 `
+      --set installCRDs=true
+}
+
 helm repo add flink-operator https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/ | Out-Null
 helm repo update | Out-Null
 helm upgrade --install flink-operator flink-operator/flink-kubernetes-operator `

@@ -1,0 +1,8 @@
+{
+  "name": "fraud",
+  "config": {
+    "served_entities": [
+      { "entity_name": "models:/fraud_model_ws/1", "entity_version": "1", "min_provisioned_throughput": { "shards": 1 } }
+    ]
+  }
+}

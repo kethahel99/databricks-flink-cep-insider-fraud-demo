@@ -1,0 +1,468 @@
+{
+  "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Resources/deployments/main",
+  "location": null,
+  "name": "main",
+  "properties": {
+    "correlationId": "9681409d-9ce1-4c42-b8ea-e3347f3b421e",
+    "debugSetting": null,
+    "dependencies": [
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerRegistry/registries/finrtacrqaity2gdbq32a",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrtacrqaity2gdbq32a",
+            "resourceType": "Microsoft.ContainerRegistry/registries"
+          },
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerService/managedClusters/finrt-aks",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-aks",
+            "resourceType": "Microsoft.ContainerService/managedClusters"
+          },
+          {
+            "apiVersion": "2024-03-02-preview",
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerService/managedClusters/finrt-aks",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-aks",
+            "resourceType": "Microsoft.ContainerService/managedClusters"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerRegistry/registries/finrtacrqaity2gdbq32a/providers/Microsoft.Authorization/roleAssignments/bdbbe5bc-6143-5d6b-9bf4-f3ccab2193cd",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "bdbbe5bc-6143-5d6b-9bf4-f3ccab2193cd",
+        "resourceType": "Microsoft.Authorization/roleAssignments"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Storage/storageAccounts/finrtdlsqaity2gdbq32a",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrtdlsqaity2gdbq32a",
+            "resourceType": "Microsoft.Storage/storageAccounts"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Storage/storageAccounts/finrtdlsqaity2gdbq32a/blobServices/default/containers/datalake",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "finrtdlsqaity2gdbq32a/default/datalake",
+        "resourceType": "Microsoft.Storage/storageAccounts/blobServices/containers"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-ehns",
+            "resourceType": "Microsoft.EventHub/namespaces"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/eventhubs/auth_txn",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "finrt-ehns/auth_txn",
+        "resourceType": "Microsoft.EventHub/namespaces/eventhubs"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-ehns",
+            "resourceType": "Microsoft.EventHub/namespaces"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/eventhubs/insider_events",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "finrt-ehns/insider_events",
+        "resourceType": "Microsoft.EventHub/namespaces/eventhubs"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-ehns",
+            "resourceType": "Microsoft.EventHub/namespaces"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/authorizationRules/send",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "finrt-ehns/send",
+        "resourceType": "Microsoft.EventHub/namespaces/authorizationRules"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns",
+            "resourceGroup": "rg-fraud-insider",
+            "resourceName": "finrt-ehns",
+            "resourceType": "Microsoft.EventHub/namespaces"
+          }
+        ],
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/authorizationRules/listen",
+        "resourceGroup": "rg-fraud-insider",
+        "resourceName": "finrt-ehns/listen",
+        "resourceType": "Microsoft.EventHub/namespaces/authorizationRules"
+      }
+    ],
+    "diagnostics": null,
+    "duration": "PT2M52.7252393S",
+    "error": null,
+    "extensions": null,
+    "mode": "Incremental",
+    "onErrorDeployment": null,
+    "outputResources": [
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerRegistry/registries/finrtacrqaity2gdbq32a",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerRegistry/registries/finrtacrqaity2gdbq32a/providers/Microsoft.Authorization/roleAssignments/bdbbe5bc-6143-5d6b-9bf4-f3ccab2193cd",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.ContainerService/managedClusters/finrt-aks",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Databricks/workspaces/finrt-dbx",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/authorizationRules/listen",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/authorizationRules/send",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/eventhubs/auth_txn",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.EventHub/namespaces/finrt-ehns/eventhubs/insider_events",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Storage/storageAccounts/finrtdlsqaity2gdbq32a",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/57eaaff2-ee44-4ff7-9be0-fc03e75adad9/resourceGroups/rg-fraud-insider/providers/Microsoft.Storage/storageAccounts/finrtdlsqaity2gdbq32a/blobServices/default/containers/datalake",
+        "identifiers": null,
+        "resourceGroup": "rg-fraud-insider",
+        "resourceType": null
+      }
+    ],
+    "outputs": {
+      "acrLoginServer": {
+        "type": "String",
+        "value": "finrtacrqaity2gdbq32a.azurecr.io"
+      },
+      "acrNameOut": {
+        "type": "String",
+        "value": "finrtacrqaity2gdbq32a"
+      },
+      "aksNameOut": {
+        "type": "String",
+        "value": "finrt-aks"
+      },
+      "databricksWorkspace": {
+        "type": "String",
+        "value": "finrt-dbx"
+      },
+      "eventHubAuth": {
+        "type": "String",
+        "value": "finrt-ehns/auth_txn"
+      },
+      "eventHubInsider": {
+        "type": "String",
+        "value": "finrt-ehns/insider_events"
+      },
+      "eventHubsKafkaBroker": {
+        "type": "String",
+        "value": "finrt-ehns.servicebus.windows.net:9093"
+      },
+      "eventHubsNamespace": {
+        "type": "String",
+        "value": "finrt-ehns"
+      },
+      "saNameOut": {
+        "type": "String",
+        "value": "finrtdlsqaity2gdbq32a"
+      }
+    },
+    "parameters": {
+      "acrSku": {
+        "type": "String",
+        "value": "Standard"
+      },
+      "aksNodeCount": {
+        "type": "Int",
+        "value": 2
+      },
+      "aksNodeSize": {
+        "type": "String",
+        "value": "Standard_D4s_v5"
+      },
+      "dbxSku": {
+        "type": "String",
+        "value": "premium"
+      },
+      "ehCapacity": {
+        "type": "Int",
+        "value": 2
+      },
+      "ehPartitions": {
+        "type": "Int",
+        "value": 12
+      },
+      "location": {
+        "type": "String",
+        "value": "eastus"
+      },
+      "namePrefix": {
+        "type": "String",
+        "value": "finrt"
+      }
+    },
+    "parametersLink": null,
+    "providers": [
+      {
+        "id": null,
+        "namespace": "Microsoft.ContainerRegistry",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "eastus"
+            ],
+            "properties": null,
+            "resourceType": "registries",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.ContainerService",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "eastus"
+            ],
+            "properties": null,
+            "resourceType": "managedClusters",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.Authorization",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              null
+            ],
+            "properties": null,
+            "resourceType": "roleAssignments",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.Storage",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "eastus"
+            ],
+            "properties": null,
+            "resourceType": "storageAccounts",
+            "zoneMappings": null
+          },
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              null
+            ],
+            "properties": null,
+            "resourceType": "storageAccounts/blobServices/containers",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.EventHub",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "eastus"
+            ],
+            "properties": null,
+            "resourceType": "namespaces",
+            "zoneMappings": null
+          },
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              null
+            ],
+            "properties": null,
+            "resourceType": "namespaces/eventhubs",
+            "zoneMappings": null
+          },
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              null
+            ],
+            "properties": null,
+            "resourceType": "namespaces/authorizationRules",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.Databricks",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "eastus"
+            ],
+            "properties": null,
+            "resourceType": "workspaces",
+            "zoneMappings": null
+          }
+        ]
+      }
+    ],
+    "provisioningState": "Succeeded",
+    "templateHash": "16795766318376943501",
+    "templateLink": null,
+    "timestamp": "2025-09-04T03:17:21.612286+00:00",
+    "validatedResources": null,
+    "validationLevel": null
+  },
+  "resourceGroup": "rg-fraud-insider",
+  "tags": null,
+  "type": "Microsoft.Resources/deployments"
+}

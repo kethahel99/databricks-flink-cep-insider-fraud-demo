@@ -55,10 +55,9 @@ resource acrAksPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(acr.id, 'AcrPull', aks.id)
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions','7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull
-    principalId: aks.identityProfile.kubeletidentity.objectId
+    principalId: aks.identity.principalId
     principalType: 'ServicePrincipal'
   }
-  dependsOn: [ acr, aks ]
 }
 
 // ADLS Gen2
@@ -110,13 +109,24 @@ resource listenRule 'Microsoft.EventHub/namespaces/authorizationRules@2024-01-01
   name: '${ehns.name}/listen'
   properties: { rights: [ 'Listen' ] }
 }
+  // Databricks managed resource group (must be created first)
+var mgtResourceGroupName = 'databricks-${namePrefix}-rg'
 
-// Databricks workspace
+resource rgDatabricksMgmt 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
+  name: mgtResourceGroupName
+  scope: subscription()
+}
+
+var mgtResourceGroupId = rgDatabricksMgmt.id
+
 resource dbx 'Microsoft.Databricks/workspaces@2023-02-01' = {
   name: dbxName
   location: location
   sku: { name: dbxSku }
-  properties: { parameters: { prepareEncryption: { value: 'false' } } }
+  properties: {
+    managedResourceGroupId: mgtResourceGroupId
+    parameters: { prepareEncryption: { value: false } }
+  }
 }
 
 // Outputs
@@ -131,5 +141,5 @@ output eventHubsKafkaBroker string = ehFqdn
 output eventHubsNamespace string = ehns.name
 output eventHubAuth string = authHub.name
 output eventHubInsider string = insiderHub.name
-output sendConn string = listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', ehns.name, sendRule.name), '2024-01-01').primaryConnectionString
-output listenConn string = listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', ehns.name, listenRule.name), '2024-01-01').primaryConnectionString
+// output sendConn string = listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', ehns.name, sendRule.name), '2024-01-01').primaryConnectionString
+// output listenConn string = listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', ehns.name, listenRule.name), '2024-01-01').primaryConnectionString

@@ -1,0 +1,4 @@
+{
+  "eh.broker": "<EH_BROKER from .out.env>",
+  "eh.listen": "<EH_LISTEN from .out.env>"
+}
