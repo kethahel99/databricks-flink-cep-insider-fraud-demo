@@ -4,7 +4,30 @@
 
 This repository demonstrates a comprehensive real-time fraud detection system that combines **Complex Event Processing (CEP)** using Apache Flink with **Machine Learning** capabilities in Databricks. The solution showcases two critical fraud detection scenarios:
 
-1. **Financial Transaction Fraud**: Detecting suspicious card transaction patterns using CEP
+1. **Financial Transaction Fraud**: Detecting suspicious card transaction p4. **Configure Databricks**
+
+1. **Upload notebooks** from `databricks/` directory
+2. **Create cluster** with runtime 11.3 LTS or later
+3. **Configure Event Hubs** connection in cluster settings
+4. **Run DLT pipeline** for data ingestion:
+   - `dlt_fraud_insider.py` - Original fraud/insider data pipeline
+   - `dlt_alert_analytics.py` - Alert analytics and reporting pipeline
+5. **Execute real-time scoring** notebook
+
+### Alert Analytics Pipeline Setup
+
+The alert analytics pipeline requires the Flink CEP to be running and producing alerts:
+
+1. **Ensure Flink is deployed** and producing alerts to the `alerts` topic
+2. **Upload `dlt_alert_analytics.py`** to Databricks
+3. **Create DLT pipeline** with the alert analytics notebook
+4. **Configure cluster** with Event Hubs connectivity
+5. **Start the pipeline** to begin processing alerts
+
+**Pipeline Dependencies**:
+- Flink CEP alerts in Event Hubs `alerts` topic
+- Optional: Existing fraud/insider feature tables for enrichment
+- Databricks SQL warehouse for dashboard queries using CEP
 2. **Insider Threat Detection**: Identifying malicious insider activities through behavioral analysis
 
 The architecture leverages Azure cloud services to create a scalable, real-time streaming analytics platform that can process thousands of events per second and generate immediate alerts for fraudulent activities.
@@ -227,6 +250,18 @@ EH_LISTEN=                  # Event Hubs connection string
 @dlt.expect_or_drop("valid_type", "type IN ('TXN','PRIV_ESC','BULK_EXPORT','EXT_SHARE')")
 ```
 
+#### Alert Analytics Pipeline (`databricks/dlt_alert_analytics.py`)
+- **Bronze Layer**: Raw alert ingestion from Flink CEP
+- **Silver Layer**: Enriched alerts with business context and severity
+- **Gold Layer**: Multiple analytics tables for dashboards and reporting
+
+**Analytics Tables**:
+- `gold_alert_dashboard`: Real-time dashboard metrics (5-minute windows)
+- `gold_daily_alert_summary`: Daily aggregated statistics
+- `gold_alert_patterns`: Pattern analysis for threat intelligence
+- `gold_combined_threat_analytics`: Combined fraud/insider analytics
+- `gold_executive_dashboard`: Executive KPIs and risk metrics
+
 ### 4. Kubernetes (AKS) Orchestration
 
 **Flink Deployment** (`k8s/flink-deployment.yaml`):
@@ -244,12 +279,63 @@ small = {'type':'TXN', 'cardId':card, 'amount':random.uniform(1,4.5)}
 large = {'type':'TXN', 'cardId':card, 'amount':random.uniform(600,2000)}
 ```
 
-#### Insider Activity Generator (`producers/send_insider.py`)
-```python
-# Simulates insider threat sequence
-for event_type in ['PRIV_ESC', 'BULK_EXPORT', 'EXT_SHARE']:
-    event = {'type': event_type, 'actor': user, 'ts': timestamp}
+### 5. Alert Analytics Pipeline
+
+**Location**: `databricks/dlt_alert_analytics.py`
+
+**Purpose**: Consumes Flink CEP alerts and creates comprehensive analytics for dashboards and reporting
+
+**Key Features**:
+- **Real-time Alert Processing**: Streams alerts from Event Hubs `alerts` topic
+- **Multi-layer Analytics**: Bronze → Silver → Gold transformation pipeline
+- **Business Enrichment**: Adds severity, categories, and business impact scoring
+- **Time-based Aggregations**: Rolling windows and daily summaries
+- **Pattern Analysis**: Detects spikes and threat campaigns
+- **Executive Dashboards**: KPI metrics for management reporting
+
+**Analytics Outputs**:
+
+#### Real-time Dashboard (`gold_alert_dashboard`)
+```sql
+-- 5-minute rolling window metrics
+SELECT window_start, alert_type, severity, alert_count, risk_score
+FROM fraud.gold_alert_dashboard
+WHERE window_start >= current_timestamp() - INTERVAL 1 HOUR
+ORDER BY window_start DESC
 ```
+
+#### Daily Summary (`gold_daily_alert_summary`)
+```sql
+-- Daily alert statistics
+SELECT date, alert_type, total_alerts, severity, weighted_risk_score
+FROM fraud.gold_daily_alert_summary
+WHERE date >= current_date() - INTERVAL 7 DAYS
+ORDER BY date DESC, weighted_risk_score DESC
+```
+
+#### Pattern Analysis (`gold_alert_patterns`)
+```sql
+-- Threat pattern detection
+SELECT pattern_date, rule, pattern_count, pattern_intensity, is_spike
+FROM fraud.gold_alert_patterns
+WHERE is_spike = true
+ORDER BY pattern_count DESC
+```
+
+#### Executive Dashboard (`gold_executive_dashboard`)
+```sql
+-- Executive KPIs
+SELECT date, total_alerts, critical_percentage, risk_index, threat_trend
+FROM fraud.gold_executive_dashboard
+WHERE date >= current_date() - INTERVAL 30 DAYS
+ORDER BY date DESC
+```
+
+**Usage in Dashboards**:
+- **Grafana/Power BI**: Connect via Databricks SQL endpoint
+- **Databricks SQL Analytics**: Direct SQL queries on gold tables
+- **Real-time Dashboards**: Streaming queries on silver/gold layers
+- **Alert Monitoring**: Real-time threshold monitoring on alert counts
 
 ## Infrastructure Components
 
@@ -461,18 +547,75 @@ checkpointing:
 3. **Create Serving Endpoint**
 4. **Update Scoring Logic** in `rtm_scoring.scala`
 
-## Cost Optimization
+## Dashboard Examples
 
-### Resource Management
-- **AKS Node Pools**: Use spot instances for dev/test
-- **Event Hubs**: Right-size throughput units
-- **Databricks**: Use job clusters for batch workloads
-- **Storage**: Implement lifecycle policies
+### Real-time Alert Monitoring Dashboard
 
-### Monitoring Costs
-- Set up billing alerts for resource groups
-- Use Azure Cost Management for optimization
-- Monitor unused resources regularly
+```sql
+-- Current hour alert summary
+SELECT
+  DATE_FORMAT(window_start, 'HH:mm') as time_window,
+  alert_type,
+  severity,
+  SUM(alert_count) as total_alerts,
+  AVG(risk_score) as avg_risk_score
+FROM fraud.gold_alert_dashboard
+WHERE window_start >= DATE_TRUNC('HOUR', CURRENT_TIMESTAMP())
+GROUP BY window_start, alert_type, severity
+ORDER BY window_start DESC
+```
+
+### Executive Risk Dashboard
+
+```sql
+-- 7-day risk trend
+SELECT
+  date,
+  total_alerts,
+  ROUND(critical_percentage, 2) as critical_pct,
+  ROUND(fraud_percentage, 2) as fraud_pct,
+  ROUND(insider_percentage, 2) as insider_pct,
+  ROUND(risk_index, 2) as risk_index,
+  threat_trend
+FROM fraud.gold_executive_dashboard
+WHERE date >= CURRENT_DATE() - INTERVAL 7 DAYS
+ORDER BY date DESC
+```
+
+### Threat Pattern Analysis
+
+```sql
+-- Top threat patterns this week
+SELECT
+  rule,
+  COUNT(*) as occurrences,
+  COUNT(DISTINCT pattern_date) as active_days,
+  AVG(pattern_count) as avg_daily_alerts,
+  MAX(pattern_count) as peak_alerts
+FROM fraud.gold_alert_patterns
+WHERE pattern_date >= CURRENT_DATE() - INTERVAL 7 DAYS
+  AND pattern_intensity IN ('HIGH_SPIKE', 'MODERATE_SPIKE')
+GROUP BY rule
+ORDER BY occurrences DESC
+```
+
+### Combined Threat Intelligence
+
+```sql
+-- Fraud vs Insider threat correlation
+SELECT
+  date,
+  alert_type,
+  SUM(alert_count) as alerts,
+  SUM(cards_involved) as cards_affected,
+  SUM(actors_involved) as actors_involved,
+  ROUND(SUM(total_amount_affected), 2) as total_amount,
+  threat_level
+FROM fraud.gold_combined_threat_analytics
+WHERE date >= CURRENT_DATE() - INTERVAL 30 DAYS
+GROUP BY date, alert_type, threat_level
+ORDER BY date DESC, alerts DESC
+```
 
 ## Contributing
 
